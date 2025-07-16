@@ -2,10 +2,10 @@
 using NaturalRegex;
 using Spectre.Console.Cli;
 
-var app = new CommandApp<FileSizeCommand>();
+var app = new CommandApp<NatRegCommand>();
 return app.Run(args);
 
-internal sealed class FileSizeCommand : Command<FileSizeCommand.Settings>
+public sealed class NatRegCommand : Command<NatRegCommand.Settings>
 {
     public sealed class Settings : CommandSettings
     {

@@ -16,10 +16,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="test.txt" />
-      <Content Include="test.txt">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
+        <TrimmerRootDescriptor Include="link.xml" />
     </ItemGroup>
-
 </Project>

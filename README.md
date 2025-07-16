@@ -93,50 +93,50 @@ More specifically, WithStandardRegexProcedures implements the following:
 - End of line
   - (end of line)
 - Capture groups
-  - (capture group <exp>)
-  - (group <exp>)
+  - (capture group \<exp\>)
+  - (group \<exp\>)
 - One or more
-  - (one or more <exp>)
-  - (at least one <exp>)
-  - (at least once <exp>)
+  - (one or more \<exp\>)
+  - (at least one \<exp\>)
+  - (at least once \<exp\>)
 - Zero or more
-  - (zero or more <exp>)
-  - (any amount <exp>)
-  - (any amount of times <exp>)
+  - (zero or more \<exp\>)
+  - (any amount \<exp\>)
+  - (any amount of times \<exp\>)
 - Zero or one
-  - (once or none <exp>)
-  - (at most once <exp>)
-  - (optional <exp>)
-  - (optionally <exp>)
-  - (once at most <exp>)
-  - (maybe <exp>)
+  - (once or none \<exp\>)
+  - (at most once \<exp\>)
+  - (optional \<exp\>)
+  - (optionally \<exp\>)
+  - (once at most \<exp\>)
+  - (maybe \<exp\>)
 - Logical or
-  - (one of <exp1> <exp2> <exp3> ... <expN>)
-  - (or <exp1> <exp2> <exp3> ... <expN>)
+  - (one of \<exp1\> \<exp2\> \<exp3\> ... \<expN\>)
+  - (or \<exp1\> \<exp2\> \<exp3\> ... \<expN\>)
 - Up to n
-  - (up to n <exp> <n>)
+  - (up to n \<exp\> \<n\>)
 - At least n
-  - ( n or more <exp> <n>)
-  - ( at least n <exp> <n>)
+  - ( n or more \<exp\> \<n\>)
+  - ( at least n \<exp\> \<n\>)
 - Between n and m
-  - (between n and m <exp> <n> <m>)
+  - (between n and m \<exp\> \<n\> \<m\>)
 - Positive lookahead
-  - (lookahead <exp>)
-  - (positive lookahead <exp>)
-  - (followed by lookahead <exp>)
+  - (lookahead \<exp\>)
+  - (positive lookahead \<exp\>)
+  - (followed by lookahead \<exp\>)
 - Negative lookahead
-  - (negative lookahead <exp>)
-  - (not followed by <exp>)
-  - (not <exp>)
+  - (negative lookahead \<exp\>)
+  - (not followed by \<exp\>)
+  - (not \<exp\>)
 - Positive lookbehind
-  - (lookbehind <exp>)
-  - (positive lookbehind <exp>)
+  - (lookbehind \<exp\>)
+  - (positive lookbehind \<exp\>)
 - Negative lookbehind
-  - (negative lookbehind <exp>)
+  - (negative lookbehind \<exp\>)
 - Lazy match (note: in normal regex, this should only be used after a quantifier; the compiler will not provide a 
 warning if this is used incorrectly)
-  - (lazy <exp>)
-  - (lazily <exp>)
+  - (lazy \<exp\>)
+  - (lazily \<exp\>)
 
 ...and WithStandardAsciiSets implements the following:
 
@@ -156,6 +156,7 @@ warning if this is used incorrectly)
 
 ## Notes
 
+* Literal sets are copied into the final regex directly since there are no transformations to apply to them.
 * You can define your own variables/procedures with `NatRegEnvironment.WithVariable` 
 by passing a name and a `NatRegExpression`. 
   * The same goes for procedures with `NatRegEnvironment.WithProcedure`. 

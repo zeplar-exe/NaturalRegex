@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Spectre.Console.Cli" Version="0.50.1-preview.0.21" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\NaturalRegex\NaturalRegex.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="test.txt" />
+      <Content Include="test.txt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+</Project>

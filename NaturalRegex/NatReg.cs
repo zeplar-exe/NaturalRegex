@@ -4,7 +4,7 @@ using Antlr4.Runtime.Tree;
 
 namespace NaturalRegex;
 
-public static class NaturalRegex
+public static class NatReg
 {
     private class Listener : NatRegBaseListener
     {
@@ -157,7 +157,7 @@ public static class NaturalRegex
                 {
                     if (natExp1 is LiteralSetExpression literalSetExpression1 &&
                         natExp2 is LiteralSetExpression literalSetExpression2)
-                        throw new NatRegArgumentException($"Cannot subtract two sets.");
+                        Expression = new LiteralSetExpression(string.Join("", literalSetExpression1.Characters.Except(literalSetExpression2.Characters)));
                     else if (natExp1 is NumberExpression numberExpression1 &&
                              natExp2 is NumberExpression numberExpression2)
                         Expression = new NumberExpression(numberExpression1.Value - numberExpression2.Value);

@@ -4,32 +4,40 @@ public static class NatRegEnvironmentExtensions
 {
     public static NatRegEnvironment WithStandardRegexProcedures(this NatRegEnvironment procedures)
     {
-        // need lazy variants
-        // need a NOT ; use negative lookaheads OR modify a literal set in special case
         return procedures
             .WithProcedure("start of line", _ => new ConstantExpression("^"), 0)
             .WithProcedure("end of line", _ => new ConstantExpression("$"), 0)
-            .WithProcedure("capture group", 
+            .WithProcedure(["capture group", "group"], 
                 expressions => new ModifierExpression(expressions[0], s => $"({s})"), 1)
             .WithProcedure(["zero or more", "any amount", "any amount of times"], 
                 expressions => new ModifierExpression(expressions[0], s => $"(?:{s})*"), 1)
             .WithProcedure(["one or more", "at least one", "at least once"], 
                 expressions => new ModifierExpression(expressions[0], s => $"(?:{s})+"), 1)
-            .WithProcedure(["once or none", "at most once", "optional", "optionally", "once at most"], 
+            .WithProcedure(["once or none", "at most once", "optional", "optionally", "once at most", "maybe"], 
                 expressions => new ModifierExpression(expressions[0], s => $"(?:{s})?"), 1)
-            .WithProcedure(["one of", "either", "or"], 
-                expressions => new ModifierExpression(expressions[0], s => $"(?:{s})?"), 2)// aaa
-            .WithProcedure(["content of group", "group content"], 
-                expressions => new ModifierExpression(expressions[0], s => $"(?:{s})?"), 1) // aaaa
+            .WithProcedure(["one of", "or"], 
+                expressions => new OrExpression(expressions))
+            .WithProcedure(["content of group", "group content", "group"], 
+                expressions => new ModifierExpression(expressions[0], s => $"({s})?"), 1)
             .WithProcedure(["n or more", "at least n"], 
                 expressions => new RangeTimesExpression(expressions, true, false), 2)
             .WithProcedure("up to n", 
                 expressions => new RangeTimesExpression(expressions, false, true), 2)
             .WithProcedure("between n and m", 
-                expressions => new RangeTimesExpression(expressions, true, true), 3);
+                expressions => new RangeTimesExpression(expressions, true, true), 3)
+            .WithProcedure(["lookahead", "positive lookahead", "followed by"], 
+                expressions => new ModifierExpression(expressions[0], s => $"(?={s})"), 1)
+            .WithProcedure(["negative lookahead", "not followed by", "not"], 
+                expressions => new ModifierExpression(expressions[0], s => $"(?<={s})"), 1)
+            .WithProcedure(["lookbehind", "positive lookbehind"], 
+                expressions => new ModifierExpression(expressions[0], s => $"(?!{s})"), 1)
+            .WithProcedure(["negative lookbehind"], 
+                expressions => new ModifierExpression(expressions[0], s => $"(?<!{s})"), 1)
+            .WithProcedure(["lazy", "lazily"], 
+                expressions => new ModifierExpression(expressions[0], s => $"{s}?"), 1);
     }
     
-    public static NatRegEnvironment WithStandardLatinSets(this NatRegEnvironment procedures)
+    public static NatRegEnvironment WithStandardAsciiSets(this NatRegEnvironment procedures)
     {
         return procedures
             .WithVariable("any alphanumeric", new LiteralSetExpression("a-zA-Z0-9"))
@@ -43,7 +51,7 @@ public static class NatRegEnvironmentExtensions
             .WithVariable("lowercase alphanumeric", new LiteralSetExpression("a-z0-9"))
             .WithVariable("uppercase alphanumeric", new LiteralSetExpression("A-Z0-9"))
             .WithVariable("any word character", new LiteralSetExpression("\\w"))
-            .WithVariable("any whitespace", new LiteralSetExpression("\\s"));
+            .WithVariable("any character", new RegexExpression("."));
     }
 
     private class ConstantExpression : NatRegExpression
@@ -60,7 +68,25 @@ public static class NatRegEnvironmentExtensions
             return Constant;
         }
     }
+
     
+    private class OrExpression : NatRegExpression
+    {
+        public NatRegExpression?[] Expressions { get; }
+
+        public OrExpression(NatRegExpression?[] expressions)
+        {
+            Expressions = expressions;
+        }
+
+        public override string ToRegex()
+        {
+            var ors = string.Join('|', Expressions.Select(e => $"(?:{e.ToRegex()})"));
+
+            return $"(?:{ors})";
+        }
+    }
+
     private class ModifierExpression : NatRegExpression
     {
         public NatRegExpression? Expression { get; }

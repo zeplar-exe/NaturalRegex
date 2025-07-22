@@ -91,6 +91,9 @@ public static class NatReg
                 }
                 
                 Expression = Environment.ResolveReference(name, expressions.ToArray());
+
+                if (Expression == null)
+                    throw new NatRegMissingReferenceException($"The reference to {name} could not be resolved.");
             }
 
             public override void ExitSequenceExpression(NatRegParser.SequenceExpressionContext context)

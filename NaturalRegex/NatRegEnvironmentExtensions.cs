@@ -19,11 +19,13 @@ public static class NatRegEnvironmentExtensions
                 expressions => new OrExpression(expressions))
             .WithProcedure(["content of group", "group content", "group"], 
                 expressions => new ModifierExpression(expressions[0], s => $"({s})?"), 1)
-            .WithProcedure(["n or more", "at least n"], 
+            .WithProcedure(["n or more", "at least n", "n or more times", "at least n times"], 
                 expressions => new RangeTimesExpression(expressions, true, false), 2)
-            .WithProcedure("up to n", 
+            .WithProcedure(["repeat n times", "n times"], 
+                expressions => new NumberTimesExpression(expressions), 2)
+            .WithProcedure(["up to n", "up to n times"], 
                 expressions => new RangeTimesExpression(expressions, false, true), 2)
-            .WithProcedure("between n and m", 
+            .WithProcedure(["between n and m", "between n and m times"], 
                 expressions => new RangeTimesExpression(expressions, true, true), 3)
             .WithProcedure(["lookahead", "positive lookahead", "followed by"], 
                 expressions => new ModifierExpression(expressions[0], s => $"(?={s})"), 1)
@@ -104,13 +106,38 @@ public static class NatRegEnvironmentExtensions
         }
     }
 
+    private class NumberTimesExpression : NatRegExpression
+    {
+        public NatRegExpression[] Arguments { get; }
+
+        public NumberTimesExpression(NatRegExpression[] arguments)
+        {
+            Arguments = arguments;
+        }
+        
+        public override string ToRegex()
+        {
+            if (Arguments[1] is NumberExpression numberExpression)
+            {
+                if (numberExpression.Value % 1 != 0)
+                    throw new NatRegArgumentException("Expected an integer number, but got a decimal for repetition number.");
+                    
+                return $"(?:{Arguments[0].ToRegex()}{{{numberExpression.Value}}})";
+            }
+            else
+            {
+                throw new NatRegArgumentException($"Expected an integer, but got {Arguments[1].GetType()} for repetition number.");
+            }
+        }
+    }
+
     private class RangeTimesExpression : NatRegExpression
     {
-        public NatRegExpression?[] Arguments { get; }
+        public NatRegExpression[] Arguments { get; }
         public bool UseMin { get; }
         public bool UseMax { get; }
 
-        public RangeTimesExpression(NatRegExpression?[] arguments, bool useMin, bool useMax)
+        public RangeTimesExpression(NatRegExpression[] arguments, bool useMin, bool useMax)
         {
             Arguments = arguments;
             UseMin = useMin;
@@ -133,7 +160,7 @@ public static class NatRegEnvironmentExtensions
                 }
                 else
                 {
-                    throw new NatRegArgumentException($"Expected an integer, but got {Arguments[1]?.GetType()} for range minimum.");
+                    throw new NatRegArgumentException($"Expected an integer, but got {Arguments[1].GetType()} for range minimum.");
                 }
             }
 
@@ -148,11 +175,11 @@ public static class NatRegEnvironmentExtensions
                 }
                 else
                 {
-                    throw new NatRegArgumentException($"Expected an integer, but got {Arguments[1]?.GetType()} for range maximum.");
+                    throw new NatRegArgumentException($"Expected an integer, but got {Arguments[1].GetType()} for range maximum.");
                 }
             }
 
-            return $"(?:{Arguments[0]?.ToRegex() ?? ""}{{{min.ToString() ?? ""},{max.ToString() ?? ""}}})";
+            return $"(?:{Arguments[0].ToRegex()}{{{min.ToString() ?? ""},{max.ToString() ?? ""}}})";
         }
     }
 }

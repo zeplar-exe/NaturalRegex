@@ -7,3 +7,11 @@ public abstract class NatRegCompileException : Exception
         
     }
 }
+
+public class NatRegMissingReferenceException : Exception
+{
+    public NatRegMissingReferenceException(string message)
+    {
+        
+    }
+}

@@ -1,24 +1,22 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-namespace NaturalRegex;
+﻿namespace NaturalRegex;
 
 public class NatRegEnvironment
 {
-    private Dictionary<string, NatRegExpression?> Environment { get; } = new();
+    private Dictionary<string, NatRegExpression> Environment { get; } = new();
 
-    public NatRegEnvironment WithVariable(string name, NatRegExpression? value)
+    public NatRegEnvironment WithVariable(string name, NatRegExpression value)
     {
         Environment[name] = value;
         
         return this;
     }
     
-    public NatRegEnvironment WithProcedure(string name, Func<NatRegExpression?[], NatRegExpression?> func, int expectedArgumentCount = -1)
+    public NatRegEnvironment WithProcedure(string name, Func<NatRegExpression[], NatRegExpression> func, int expectedArgumentCount = -1)
     {
         return WithProcedure([name], func, expectedArgumentCount);
     }
 
-    public NatRegEnvironment WithProcedure(string[] names, Func<NatRegExpression?[], NatRegExpression?> func, int expectedArgumentCount = -1)
+    public NatRegEnvironment WithProcedure(string[] names, Func<NatRegExpression[], NatRegExpression> func, int expectedArgumentCount = -1)
     {
         foreach (var name in names)
         {
@@ -33,7 +31,7 @@ public class NatRegEnvironment
         return Environment.ContainsKey(name);
     }
     
-    public bool TryApply(string name, NatRegExpression?[] arguments, out NatRegExpression? result)
+    public bool TryApply(string name, NatRegExpression[] arguments, out NatRegExpression? result)
     {
         result = null;
         
@@ -57,17 +55,17 @@ public class NatRegEnvironment
         return true;
     }
     
-    public NatRegExpression? ResolveReference(string reference, NatRegExpression?[] arguments)
+    public NatRegExpression? ResolveReference(string reference, NatRegExpression[] arguments)
     {
         return TryApply(reference, arguments, out var result) ? result : null;
     }
     
     private class ProcedureExpression : NatRegExpression
     {
-        public Func<NatRegExpression?[], NatRegExpression?> Func { get; }
+        public Func<NatRegExpression[], NatRegExpression> Func { get; }
         public int ExpectedArgumentCount { get; }
 
-        public ProcedureExpression(Func<NatRegExpression?[], NatRegExpression?> func, int expectedArgumentCount)
+        public ProcedureExpression(Func<NatRegExpression[], NatRegExpression> func, int expectedArgumentCount)
         {
             Func = func;
             ExpectedArgumentCount = expectedArgumentCount;

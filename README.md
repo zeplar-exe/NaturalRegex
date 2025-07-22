@@ -115,9 +115,15 @@ More specifically, WithStandardRegexProcedures implements the following:
   - (or \<exp1\> \<exp2\> \<exp3\> ... \<expN\>)
 - Up to n
   - (up to n \<exp\> \<n\>)
+  - (up to n times \<exp\> \<n\>)
+- N times
+  - (repeat n times \<exp\> \<n\>)
+  - (n times \<exp\> \<n\>)
 - At least n
-  - ( n or more \<exp\> \<n\>)
-  - ( at least n \<exp\> \<n\>)
+  - (n or more \<exp\> \<n\>)
+  - (n or more times \<exp\> \<n\>)
+  - (at least n \<exp\> \<n\>)
+  - (at least n times \<exp\> \<n\>)
 - Between n and m
   - (between n and m \<exp\> \<n\> \<m\>)
 - Positive lookahead
